@@ -64,7 +64,7 @@ render(universe)
  * @param {number[]} cell Cell with coords m, n ([m, n])
  * @returns {number[][]} List of 8 neighbors of the cell (including 'invalid' ones)
  */
-var getNeighbors = ([m, n]) => {
+const getNeighbors = ([m, n]) => {
   const ops = [-1, 0, 1]
   // [[m-1, n-1], [m-1, n], [m-1, n+1], [m, n-1], [m, n+1], [m+1, n-1], [m+1, n], [m+1, n+1]]
   return ops.map(x => ops.map(y => [m + x, n + y])).flat().filter((v, i) => i === 4 ? false : true)
@@ -93,8 +93,6 @@ const wrapIndex = i => {
  * @returns {number[]} 'Wrapped' cell
  */
 const wrapCell = ([m, n]) => [wrapIndex(m), wrapIndex(n)]
-
-// const isValid = ([m, n]) => m >= 0 && n >= 0 && m < GRID_SIZE && n < GRID_SIZE
 
 /**
  * Given the state of a cell (dead or alive), and the number of live neighbors, determine it's next state
@@ -131,7 +129,7 @@ const nextCellState = (alive, liveNeighbors) => {
 const countAlive = cells => cells.reduce((acc, [m ,n]) => universe[m][n] ? acc + 1 : acc, 0)
 
 /**
- * Step? through a single generation of a universe
+ * Step through a single generation of a universe
  * @param {number[][]} universe Game of life universe
  * @returns {number[][]} New universe
  */
@@ -145,7 +143,7 @@ const step = universe => universe.map((row, m) => row.map((cell, n) => {
 }))
 
 /**
- * Step through a generation of the universe, then re-render after PERIOD milliseconds
+ * Step through a generation of the universe, then animate
  * 
  */
 const animate = (_ => {
