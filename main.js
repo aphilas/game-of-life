@@ -107,7 +107,6 @@ const nextCellState = (alive, liveNeighbors) => {
     /**
      * If a live cell has fewer than two live neighbors, it dies of isolation
      * If a live cell has more than three live neighbors, it dies due to overpopulation
-     * 
      */
     if (liveNeighbors < 2 || liveNeighbors > 3) return false
   } else {
@@ -129,16 +128,6 @@ const nextCellState = (alive, liveNeighbors) => {
  * @param {number[][]} cells List of cells
  * @returns {number} Number of live cells
  */
-// const countAlive = cells => {
-//   let alive = 0
-
-//   cells.forEach(([m, n]) => {
-//     if (universe[m][n]) alive += 1
-//   })
-
-//   return alive
-// }
-
 const countAlive = cells => cells.reduce((acc, [m ,n]) => universe[m][n] ? acc + 1 : acc, 0)
 
 /**
@@ -159,14 +148,13 @@ const step = universe => universe.map((row, m) => row.map((cell, n) => {
  * Step through a generation of the universe, then re-render after PERIOD milliseconds
  * 
  */
-const ticker = (_ => {
-  const PERIOD = 250
+const animate = (_ => {
   const tick = _ => {
     universe = step(universe)
     render(universe)
-    setTimeout(tick, PERIOD)
+    window.requestAnimationFrame(tick)
   }
-  setTimeout(tick, PERIOD)
+  window.requestAnimationFrame(tick)
 })()
 
 /**
