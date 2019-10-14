@@ -131,15 +131,17 @@ const nextCellState = (alive, liveNeighbors) => {
  * @param {number[][]} cells List of cells
  * @returns {number} Number of live cells
  */
-const countAlive = cells => {
-  let alive = 0
+// const countAlive = cells => {
+//   let alive = 0
 
-  cells.forEach(([m, n]) => {
-    if (universe[m][n]) alive += 1
-  })
+//   cells.forEach(([m, n]) => {
+//     if (universe[m][n]) alive += 1
+//   })
 
-  return alive
-}
+//   return alive
+// }
+
+const countAlive = cells => cells.reduce((acc, [m ,n]) => universe[m][n] ? acc + 1 : acc, 0)
 
 /**
  * Step? through a single generation of a universe
