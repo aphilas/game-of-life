@@ -67,34 +67,28 @@ render(universe)
 const getNeighbors = ([m, n]) => [[m-1, n-1], [m-1, n], [m-1, n+1], [m, n-1], [m, n+1], [m+1, n-1], [m+1, n], [m+1, n+1]]
 
 /**
- * Factory for a function which 'wraps' array access indices. Index bigger than length - 1 jumps to start. Index less than 0 does reverse direction lookup.
- * @param {number} len Length of array
+ * Bind universe access indices to size of universe. Wrap larger/smaller values. 
+ * @param {number} i Access index
  * 
  * @example
- * const arr = [1, 2, 3]
- * const wrapArr = wrapIndex(arr.length)
+ * wrapIndex(-1) // 99
  * 
- * arr[wrapArr(-1)] // 3
- * arr[wrapArr(3)] // 1 
+ * @example
+ * wrapIndex(100) // 0
  * 
  */
-const wrapIndex = len => i => {
-  i %= len
-  if (i < 0) i += len
+const wrapIndex = i => {
+  i %= GRID_SIZE
+  if (i < 0) i += GRID_SIZE
   return i
 }
-
-/**
- * Wrap an index between 0 and length of universe
- */
-const wrapGrid = wrapIndex(universe.length)
 
 /**
  * Given a cell, if it's not within the bounds of the universe, assume the top and bottom edges are stitched, and the left and right edges are stitched.
  * @param {number[]} cell Cell values 
  * @returns {number[]} 'Wrapped' cell
  */
-const wrapCell = ([m, n]) => [wrapGrid(m), wrapGrid(n)]
+const wrapCell = ([m, n]) => [wrapIndex(m), wrapIndex(n)]
 
 // const isValid = ([m, n]) => m >= 0 && n >= 0 && m < GRID_SIZE && n < GRID_SIZE
 
