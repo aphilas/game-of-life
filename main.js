@@ -62,9 +62,13 @@ render(universe)
 /**
  * Generate a list of neighbors of a cell
  * @param {number[]} cell Cell with coords m, n ([m, n])
- * @returns {number[][]} List of 8 neighbors of the cell (including invalid ones)
+ * @returns {number[][]} List of 8 neighbors of the cell (including 'invalid' ones)
  */
-const getNeighbors = ([m, n]) => [[m-1, n-1], [m-1, n], [m-1, n+1], [m, n-1], [m, n+1], [m+1, n-1], [m+1, n], [m+1, n+1]]
+var getNeighbors = ([m, n]) => {
+  const ops = [-1, 0, 1]
+  // [[m-1, n-1], [m-1, n], [m-1, n+1], [m, n-1], [m, n+1], [m+1, n-1], [m+1, n], [m+1, n+1]]
+  return ops.map(x => ops.map(y => [m + x, n + y])).flat().filter((v, i) => i === 4 ? false : true)
+}
 
 /**
  * Bind universe access indices to size of universe. Wrap larger/smaller values. 
