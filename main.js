@@ -1,5 +1,3 @@
-console.info("Starting game of life...")
-
 /**
  * Returns a random Boolean value, true or false
  * @returns {boolean}
@@ -59,7 +57,12 @@ canvasEl.style.height = rect.height + 'px'
 
 // End fix
 
-ctx.fillStyle = 'white'
+// Support dark mode
+const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+
+const background = isDarkMode() ? 'black' : 'white'
+
+ctx.fillStyle = background
 ctx.fillRect(0, 0, canvasEl.width, canvasEl.height)
 
 const render = universe => {
@@ -69,7 +72,7 @@ const render = universe => {
         ctx.fillStyle = 'gray'
         ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
       } else {
-        ctx.fillStyle = 'white'
+        ctx.fillStyle = background
         ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
       }
     })
