@@ -4,8 +4,8 @@
  */
 const randomBool = _ => Math.random() >= 0.5
 
-// dimension of (square) grid
-const GRID_SIZE = 100
+const GRID_SIZE = 100 // No. of cells w/h
+const PERIOD = 1000
 
 /**
  * Create a Game of Life universe of dimension rows x columns with a random configuration
@@ -32,30 +32,49 @@ const createUniverse = (rows, cols) => {
 
 let universe = createUniverse(GRID_SIZE, GRID_SIZE)
 
-/* DOM */
+/* Canvas */
 
-// not the most performant implementation, but is beyond the scope of the program
+const canvasEl = document.querySelector('canvas')
+const ctx = canvasEl.getContext('2d', { alpha: false })
 
-const gridDom = document.getElementsByClassName('grid')[0]
-const divDom = document.createElement('div')
+const CELL_SIZE = 4
+
+canvasEl.width = GRID_SIZE * CELL_SIZE
+canvasEl.height = canvasEl.width
+
+// Fix for HDR displays
+
+const dpr = window.devicePixelRatio
+const rect = canvasEl.getBoundingClientRect()
+
+canvasEl.width = rect.width * dpr
+canvasEl.height = rect.height * dpr
+
+ctx.scale(dpr, dpr) // Scale down to fix coords
+
+canvasEl.style.width = rect.width + 'px'
+canvasEl.style.height = rect.height + 'px'
+
+// End fix
+
+ctx.fillStyle = 'white'
+ctx.fillRect(0, 0, canvasEl.width, canvasEl.height)
 
 const render = universe => {
-  gridDom.innerHTML = ''
-  const cellsFrag = document.createDocumentFragment()
-
-  universe.forEach(row => {
-    row.forEach(cell => {
-      const cellDom = divDom.cloneNode()
-      cellDom.classList.add('cell')
-      if (cell) cellDom.classList.add('alive')
-      cellsFrag.appendChild(cellDom)
+  universe.forEach((row, x) => {
+    row.forEach((cell, y) => {
+      if (cell) {
+        ctx.fillStyle = 'gray'
+        ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+      } else {
+        ctx.fillStyle = 'white'
+        ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+      }
     })
   })
-
-  gridDom.appendChild(cellsFrag)
 }
 
-/* DOM */
+/* \Canvas */
 
 render(universe)
 
@@ -142,16 +161,38 @@ const step = universe => universe.map((row, m) => row.map((cell, n) => {
   return nextCellState(cell, alive)
 }))
 
+const throttle = (fn, wait, ...args) => {
+  let inThrottle, timeout, previous
+
+  return () => {
+    if (!inThrottle) {
+      fn.apply(null, args)
+      previous = Date.now()
+      inThrottle = true
+    } else {
+      clearTimeout(timeout)
+
+      timeout = setTimeout(function() {
+        if (Date.now() - previous >= wait) {
+          fn.apply(null, args)
+          previous = Date.now()
+        }
+      }, Math.max(wait - (Date.now() - previous), 0))
+    }
+  }
+}
+
 /**
  * Step through a generation of the universe, then animate
  * 
  */
 const animate = (_ => {
-  const tick = _ => {
+  const tick = throttle(_ => {
     universe = step(universe)
     render(universe)
     window.requestAnimationFrame(tick)
-  }
+  }, PERIOD)
+
   window.requestAnimationFrame(tick)
 })()
 
