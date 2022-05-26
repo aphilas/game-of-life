@@ -1,3 +1,5 @@
+console.info("Starting game of life...")
+
 /**
  * Returns a random Boolean value, true or false
  * @returns {boolean}
